@@ -12,32 +12,58 @@ class AlienInvastion:
         pygame.init()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode(
-            (self.settings.screen_width, self.settings.screen_height))
-        pygame.display.set_caption("Alien Invasion")
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
+        self.settings.screen_height = self.screen.get_rect().height
 
         # Set the background colour.
         self.bg_color = (0, 0, 0)
 
         # Applying the ship to the main class
         self.ship = Ship(self)
-        self.alien = BackgroundCharacter(self)
+        self.alien = BackgroundCharacter(self)        
 
     
     def run_game(self):
         # Start the main loop for the game
         while True:
             self._check_events()
-            self._update_screen()
-            
+            self.ship.update()
+            self._update_screen()           
 
             
     def _check_events(self):
-        
         # Respond to key presses and mouse events 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                self._check_keydown_events(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_events(event)
+            
+
+            
+    def _check_keydown_events(self, event):
+
+        # Conditional statements for keys when pressed
+        
+            if event.key == pygame.K_RIGHT:
+                self.ship.moving_right = True
+            elif event.key == pygame.K_LEFT:
+                self.ship.moving_left = True
+            elif event.key == pygame.K_q:
+                sys.exit()
+    
+    def _check_keyup_events(self, event):
+
+        # Conditional statements for keys when released
+            
+            if event.key == pygame.K_RIGHT:
+                self.ship.moving_right = False
+            elif event.key == pygame.K_LEFT:
+                self.ship.moving_left = False
+
     
     def _update_screen(self):
 
@@ -49,7 +75,7 @@ class AlienInvastion:
         self.ship.blitme()
             
         # Make the most recently drawn screen visable
-        pygame.display.flip()
+        pygame.display.flip()    
 
 
 
