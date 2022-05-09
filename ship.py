@@ -51,7 +51,7 @@ class BackgroundCharacter:
         self.screen_rect = ai_game.screen.get_rect()
 
         # Loading the background image
-        self.image2 = pygame.image.load('alien_invasion/images/alien.bmp')
+        self.image2 = pygame.image.load('alien_invasion/images/alien_background.bmp')
         self.rect = self.image2.get_rect()
 
         # Start character in the middle of the screen
