@@ -3,8 +3,9 @@ import pygame
 from ship import BackgroundCharacter
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
-class AlienInvastion:
+class AlienInvasion:
     # Overall class to manage game assets and behaviour
 
     def __init__(self):
@@ -21,7 +22,8 @@ class AlienInvastion:
 
         # Applying the ship to the main class
         self.ship = Ship(self)
-        self.alien = BackgroundCharacter(self)        
+        self.alien = BackgroundCharacter(self)   
+        self.bullets = pygame.sprite.Group()     
 
     
     def run_game(self):
@@ -29,7 +31,9 @@ class AlienInvastion:
         while True:
             self._check_events()
             self.ship.update()
-            self._update_screen()           
+            self._update_screen()  
+            self._update_bullets()
+               
 
             
     def _check_events(self):
@@ -54,6 +58,8 @@ class AlienInvastion:
                 self.ship.moving_left = True
             elif event.key == pygame.K_q:
                 sys.exit()
+            elif event.key == pygame.K_SPACE:
+                self._fire_bullet()
     
     def _check_keyup_events(self, event):
 
@@ -63,6 +69,26 @@ class AlienInvastion:
                 self.ship.moving_right = False
             elif event.key == pygame.K_LEFT:
                 self.ship.moving_left = False
+    
+    def _fire_bullet(self):
+        # Create a new bullet and add it to the bullets group
+
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+    
+    def _update_bullets(self):
+
+        self.bullets.update() 
+
+            # Get rid of bullets that have disappeared
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+        # Printing the len of bullets lets us know if bullets are
+        # being deleted properly after hitting the top of the screen.
+        print(len(self.bullets))  
+
 
     
     def _update_screen(self):
@@ -73,6 +99,8 @@ class AlienInvastion:
         # Placing the ship to the instance of the game
         self.alien.blitme()
         self.ship.blitme()
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
             
         # Make the most recently drawn screen visable
         pygame.display.flip()    
@@ -81,5 +109,5 @@ class AlienInvastion:
 
 if __name__ == '__main__':
     # Make a game instance, and run the game
-    ai = AlienInvastion()
+    ai = AlienInvasion()
     ai.run_game()
